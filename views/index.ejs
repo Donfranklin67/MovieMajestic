@@ -1,0 +1,76 @@
+<%- include("partials/header"); -%>
+
+  <main >
+
+    <section>
+
+      <section class="py-5 text-center container">
+        <div class="row py-lg-5">
+          <div class="col-lg-6 col-md-8 mx-auto">
+            <h1 class="fw-light">Welcome to MovieMajestic!</h1>
+            <p class="lead text-body-secondary">We invite you to embark on a journey where stories come alive on the big
+              screen. Get ready to be thrilled, inspired, and transported to different worlds through the magic of movies.
+              Lights, camera, action - let's make memories together!</p>
+            <p>
+              <a href="#album" class="btn btn-primary my-2">Browse Our Collection</a>
+            </p>
+          </div>
+        </div>
+      </section>
+  
+      <div id="album" class="album py-5 bg-body-tertiary">
+        <div class="container">
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+  
+            <% if (locals.cardTitle) { %>
+              <% for (let index = 0; index < 9; index++) { %>
+
+                <form action="/movie" method="post">
+                  
+                  <div class="col">
+                    <div class="card shadow-sm">
+                      <img src="<%= imagesPath[index] %>" class="bd-placeholder-img card-img-top" width="100%"
+                        height="350" alt="A murder of the Innocent">
+                        <input type="hidden" name="ImgUrl" value="<%= imagesPath[index] %>"></input>
+                      <div class="card-body">
+                        <h5 class="card-title">
+                          <%= cardTitle[index] %>
+                        </h5>
+                        <input type="hidden" name="Title" value="<%= cardTitle[index] %>"></input>
+
+                        <input type="hidden" name="Index" value="<%= index %>"></input>
+  
+                        <% const story = writeUps[index] %>
+                        <input type="hidden" name="Story" value="<%= story %>"></input>
+  
+                        <p class="card-text">
+                          <%= story.substring(0, 100) + "..."  %>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <button type="submit" class="btn btn-primary">View</button>
+                          <small class="text-body-secondary">
+                            <%= runtimes[index] %>
+                          </small>
+                          <input type="hidden" name="Duration" value="<%= runtimes[index] %>"></input>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </form>
+  
+                <% }; %>
+                  <% } %>
+  
+  
+          </div>
+        </div>
+      </div>
+  
+
+    </section>
+    
+  </main>
+
+  <%- include("partials/footer"); -%>

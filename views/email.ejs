@@ -1,0 +1,40 @@
+<%- include("partials/header"); -%>
+
+
+    <section>
+
+        <form action="/emails" method="post">
+            <div class="container p-3 w-75">
+                <div class="row align-items-center">
+
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label fs-2 fw-semibold">Name</label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">@</span>
+                            <input type="text" class="form-control form-control-lg" placeholder="Name" aria-label="Username" aria-describedby="basic-addon1" name="Name">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label fs-2 fw-semibold">Email</label>
+                        <input type="email" class="form-control form-control-lg" id="exampleFormControlInput1"
+                            placeholder="name@example.com" name="Email">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea1" class="form-label fs-2 fw-semibold">Comments</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="Comments"></textarea>
+                    </div>
+
+                    <div class="mb-3 d-grid gap-2 mx-auto">
+                        <button class="btn btn-primary btn-md" type="submit">Send</button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+
+    </section>
+
+    <%- include("partials/footer"); -%>
