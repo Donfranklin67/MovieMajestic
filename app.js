@@ -6,6 +6,11 @@ import {dirname} from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
+import  mongoose from "mongoose";
+import Movie from "./models/movieLinksModel.js";
+import  ImagePath  from "./models/imagePathModel.js";
+import Trailer from "./models/trailerLinksModel.js";
+import Title from "./models/titleModel.js";
 
 // Initialize Express app
 const app = express();
@@ -13,11 +18,17 @@ const app = express();
 // Load environment variables from config.env
 dotenv.config({ path: "./config.env" });
 
+// Mongoose 
+mongoose.set("strictQuery", false)
+mongoose.connect(String(process.env.DATABASE)).then((con) => {
+  console.log("Database connected successfully!")
+})
+
 // Initializing __dirname const
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Set the port from environment variables
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 // Set the apiKey from environment variables
 const apiKey = process.env.APIKEY
@@ -43,18 +54,21 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Array of movie names to search for.
-const movies = ["The Encounter", "I Believe", "God's not Dead", "Heaven Is for Real", "Breakthrough", "Courageous", "The Passion of Christ", "I Can Only Imagine", "break every chain"];
+// Arrays of movie to search for.
+var movies;
+let trailerLinks;
+let imagesPath;
+let videoLinks;
 
-// Stores the trailer links for the trailer button in movie.ejs file.
-const trailerLinks = ["https://www.youtube.com/watch?v=iMDaERXJfCk", "https://www.youtube.com/watch?v=amVlQozDJkI", "https://www.youtube.com/watch?v=j2KDj7qxnds", "https://www.youtube.com/watch?v=mydh4MEo2B0", "https://www.youtube.com/watch?v=go1jaIRQc-o", "https://www.youtube.com/watch?v=70MVn1q-yyM", "https://www.youtube.com/watch?v=4Aif1qEB_JU", "https://www.youtube.com/watch?v=OsMyv9Q4_OU", "https://www.youtube.com/watch?v=EtRdHtIS-WM"]
+try {
+ movies = await Title.find({}).exec();
+ trailerLinks = await Trailer.find({}).exec();
+ imagesPath = await ImagePath.find({}).exec();
+ videoLinks = await Movie.find({}).exec();
 
-// Stores the images path.
-const imagesPath = ["/images/The_Encounter_Image1.jpg", "/images/I_Believe.jpg", "/images/God_is_not_Dead.jpg", "/images/Heaven_Is_for_Real.jpg", "/images/Break_Through.jpeg", "/images/Courageous.jpg",
-  "/images/The_Passion_of_christ.jpg", "/images/I_can_only_imagine.jpg", "/images/Break_Every_Chain.jpg"]
-
-// Stores the full movie links for the watch button in movie.ejs file.
-const videoLinks = ["https://www.youtube.com/watch?v=bj-PekUGBnA", "https://www.youtube.com/watch?v=1USWVZjTRw8", "https://www.youtube.com/watch?v=01oZRcMAX4Q", "https://www.youtube.com/watch?v=2dqXLuYPizs&t=23s", "https://archive.org/details/breakthrough-movie-2019", "https://www.youtube.com/watch?v=1mIBHNysDIo&t=6s", "https://www.youtube.com/watch?v=W9UcImEiF9o", "https://www.youtube.com/watch?v=bsbIHXMuae8", "https://www.youtube.com/watch?v=-Mp7hjgjY70&t=11s"]
+} catch (e) {
+  console.log(e.message)
+}
 
 
 // Arrays to store movie data.
@@ -75,7 +89,7 @@ async function dataCollection(req, res, next) {
     };
 
     for (let i = 0; i < movies.length; i++) {
-      const movieData = await axios.get("https://api.themoviedb.org/3/search/movie?query=" + movies[i] + "&api_key=" + apiKey);
+      const movieData = await axios.get("https://api.themoviedb.org/3/search/movie?query=" + movies[i].title + "&api_key=" + apiKey);
       const movieDetails = await axios.get("https://api.themoviedb.org/3/movie/" + movieData.data.results[0].id + "?api_key=" + apiKey);
 
       Titles.push(movieDetails.data.original_title);
@@ -96,7 +110,11 @@ app.use(dataCollection);
 
 // Home page route
 app.get("/", (req, res) => {
-  res.render("index", { cardTitle: Titles, writeUps: writeUps, runtimes: runtimes, imagesPath: imagesPath });
+  if (Titles && writeUps && runtimes && imagesPath) {
+    res.render("index", { cardTitle: Titles, writeUps: writeUps, runtimes: runtimes, imagesPath: imagesPath });
+  } else {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 // Movie details page route

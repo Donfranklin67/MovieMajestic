@@ -30,9 +30,9 @@
                   
                   <div class="col">
                     <div class="card shadow-sm">
-                      <img src="<%= imagesPath[index] %>" class="bd-placeholder-img card-img-top" width="100%"
+                      <img src="<%= imagesPath[index].path %>" class="bd-placeholder-img card-img-top" width="100%"
                         height="350" alt="A murder of the Innocent">
-                        <input type="hidden" name="ImgUrl" value="<%= imagesPath[index] %>"></input>
+                        <input type="hidden" name="ImgUrl" value="<%= imagesPath[index].path %>"></input>
                       <div class="card-body">
                         <h5 class="card-title">
                           <%= cardTitle[index] %>
